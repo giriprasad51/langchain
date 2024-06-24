@@ -27,6 +27,7 @@ class PydanticOutputParser(JsonOutputParser, Generic[TBaseModel]):
     """The pydantic model to parse."""
 
     def _parse_obj(self, obj: dict) -> TBaseModel:
+        print("---------------check-point-1----------------")
         if PYDANTIC_MAJOR_VERSION == 2:
             try:
                 if issubclass(self.pydantic_object, pydantic.BaseModel):
@@ -49,6 +50,7 @@ class PydanticOutputParser(JsonOutputParser, Generic[TBaseModel]):
     def _parser_exception(
         self, e: Exception, json_object: dict
     ) -> OutputParserException:
+        print("---------------check-point-2----------------")
         json_string = json.dumps(json_object)
         name = self.pydantic_object.__name__
         msg = f"Failed to parse {name} from completion {json_string}. Got: {e}"
@@ -57,6 +59,7 @@ class PydanticOutputParser(JsonOutputParser, Generic[TBaseModel]):
     def parse_result(
         self, result: List[Generation], *, partial: bool = False
     ) -> TBaseModel:
+        print("---------------check-point-3----------------")
         json_object = super().parse_result(result)
         return self._parse_obj(json_object)
 
@@ -64,6 +67,7 @@ class PydanticOutputParser(JsonOutputParser, Generic[TBaseModel]):
         return super().parse(text)
 
     def get_format_instructions(self) -> str:
+        print("---------------check-point-4----------------")
         # Copy schema to avoid altering original Pydantic schema.
         schema = {k: v for k, v in self.pydantic_object.schema().items()}
 
@@ -80,11 +84,13 @@ class PydanticOutputParser(JsonOutputParser, Generic[TBaseModel]):
 
     @property
     def _type(self) -> str:
+        print("---------------check-point-5----------------")
         return "pydantic"
 
     @property
     def OutputType(self) -> Type[TBaseModel]:
         """Return the pydantic model."""
+        print("---------------check-point-6----------------")
         return self.pydantic_object
 
 
